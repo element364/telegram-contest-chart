@@ -1,3 +1,3 @@
-import data from './chart_data.json'
+import data from '../docs/chart_data.json'
 
 console.log(data)
