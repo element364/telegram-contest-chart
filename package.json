@@ -1,0 +1,24 @@
+{
+  "name": "telegram-chart",
+  "version": "1.0.0",
+  "description": "Telegram chart",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel index.html --open",
+    "build": "parcel build index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/element364/telegram-chart.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/element364/telegram-chart/issues"
+  },
+  "homepage": "https://gitlab.com/element364/telegram-chart#readme",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.0"
+  }
+}
