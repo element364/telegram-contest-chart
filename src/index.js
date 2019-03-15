@@ -1,7 +1,7 @@
 import Plotly from 'plotly.js-dist'
 
 import { renderChart } from './chart'
-import { createDomElement } from './vdom'
+import { h } from './vdom'
 
 import data from '../docs/chart_data.json'
 
@@ -53,10 +53,10 @@ for (let idx = 0; idx < data.length; idx++) {
   const id2 = `chart-c-${idx}`
 
   document.getElementById('app').appendChild(
-    createDomElement('div', {}, [
-      createDomElement('div', { id: id1 }),
-      createDomElement('div', { id: id2 }),
-      createDomElement('hr')
+    h('div', {}, [
+      h('div', { id: id1 }),
+      h('div', { id: id2 }),
+      h('hr')
     ])
   )
 
