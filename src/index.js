@@ -1,16 +1,9 @@
 import Plotly from 'plotly.js-dist'
 
+import { renderChart } from './chart'
+import { createDomElement } from './vdom'
+
 import data from '../docs/chart_data.json'
-
-var data2 = [
-  {
-    x: ['2013-10-04 22:23:00', '2013-11-04 22:23:00', '2013-12-04 22:23:00'],
-    y: [1, 3, 6],
-    type: 'scatter'
-  }
-];
-
-Plotly.newPlot('app', data2);
 
 console.log(data)
 
@@ -49,22 +42,30 @@ for (let idx = 0; idx < data.length; idx++) {
       mode: 'lines',
       name: dataSet.names[color],
       line: {
-        color
+        color: dataSet.colors[color]
       }
     })
   }
 
   console.log('chartData', chartData)
 
-  const id = `chart-${idx}`
-  const el = document.createElement('div')
-  el.setAttribute('id', id)
-  document.getElementById('app').appendChild(el)
+  const id1 = `chart-o-${idx}`
+  const id2 = `chart-c-${idx}`
 
-  Plotly.newPlot(id, chartData, {
+  document.getElementById('app').appendChild(
+    createDomElement('div', {}, [
+      createDomElement('div', { id: id1 }),
+      createDomElement('div', { id: id2 }),
+      createDomElement('hr')
+    ])
+  )
+
+  Plotly.newPlot(id1, chartData, {
     xaxis: {
       rangeslider: {}
     }
   });
+
+  renderChart(id2, chartData)
 }
 
