@@ -1,7 +1,8 @@
 // How oftet Object.keys will be executed ???
 
 export function h(tag, props = {}, children = []) {
-  const isSvgTag = tag === "svg" || tag === "g" || tag === "circle" || tag === "path";
+  const isSvgTag =
+    tag === "svg" || tag === "g" || tag === "circle" || tag === "path" || tag === "rect";
 
   const el = isSvgTag
     ? document.createElementNS("http://www.w3.org/2000/svg", tag)
