@@ -31,4 +31,87 @@ export function h(tag, props = {}, children = []) {
   return el;
 }
 
-export function render(node, vdom) {}
+export function createElement(tagName, props = {}, children = []) {
+  return () => {
+    return {
+      tagName,
+      props,
+      children //: children.map(c => typeof c === "function" ? c(): c)
+    }
+  }
+}
+
+// export function render(vDom) {
+//   return vDom;
+// }
+
+let prevState;
+let currentHook;
+
+export function render(lazyVDom) {
+  currentHook = [];
+  prevState = lazyVDom.prevState;
+  let vdom = typeof lazyVDom === 'function' ? lazyVDom() : lazyVDom;
+  // Component
+  if (typeof vdom === 'function') {
+    currentHook[2] = lazyVDom;
+    currentHook[5] = lazyVDom.prevState;
+    vdom = vdom();
+  }
+
+  let el;
+  if (typeof vdom === 'string') {
+    el = document.createTextNode(vdom);
+    currentHook[3] = el;
+    return el;
+  }
+
+  el = document.createElement(vdom.tagName);
+  currentHook[3] = el;
+  for (let [attr, value] of Object.entries(vdom.props)) {
+    if (attr.indexOf('on') === 0) {
+      el.addEventListener(attr.substring(2).toLowerCase(), value);
+    } else {
+      el.setAttribute(attr, value);
+    }
+  }
+  for (let child of vdom.children) {
+    el.appendChild(render(child));
+  }
+  return el;
+}
+
+// Mount как то должен связать vdom и реальный
+export function mount(target, vDom) {
+  const dom = render(vDom);
+  target.replaceWith(dom);
+}
+
+export function withState(initialState) {
+  let state = initialState;
+  if (prevState !== undefined) {
+    state = prevState;
+  }
+  let self;
+  console.log('withState');
+  currentHook = self = [
+    () => {
+      console.log('state', self[5]);
+      // const vDom = self[2];
+      // restore state after remounting
+      // if (vDom && vDom.prevState !== undefined) {
+      //   state = vDom.prevState;
+      // }
+      return state;
+    },
+    (newState) => {
+      state = newState;
+      const target = self[3];
+      const vDom = self[2];
+      vDom.prevState = newState;
+      console.log('Prev state: ', vDom.prevState);
+
+      mount(target, vDom);
+    }];
+  return self;
+}
