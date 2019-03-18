@@ -36,17 +36,22 @@ export function createElement(tagName, props = {}, children = []) {
     return {
       tagName,
       props,
-      children //: children.map(c => typeof c === "function" ? c(): c)
+      children
     }
   }
 }
 
-// export function render(vDom) {
-//   return vDom;
-// }
+export function createComponent(fn, props = {}, children = []) {
+  return () => fn(props, children);
+}
 
 let prevState;
-let currentHook;
+let currentHook = [
+  // 0: hook first parameter
+  // 1: hook second parameter
+  // 2: lazy VDOM element
+  // 3: DOM element
+];
 
 export function render(lazyVDom) {
   currentHook = [];
@@ -55,7 +60,6 @@ export function render(lazyVDom) {
   // Component
   if (typeof vdom === 'function') {
     currentHook[2] = lazyVDom;
-    currentHook[5] = lazyVDom.prevState;
     vdom = vdom();
   }
 
@@ -66,7 +70,14 @@ export function render(lazyVDom) {
     return el;
   }
 
-  el = document.createElement(vdom.tagName);
+  const tag = vdom.tagName;
+  const isSvgTag =
+    tag === "svg" || tag === "g" || tag === "circle" || tag === "path" || tag === "rect";
+
+  el = isSvgTag
+    ? document.createElementNS("http://www.w3.org/2000/svg", tag)
+    : document.createElement(tag);
+
   currentHook[3] = el;
   for (let [attr, value] of Object.entries(vdom.props)) {
     if (attr.indexOf('on') === 0) {
@@ -81,7 +92,6 @@ export function render(lazyVDom) {
   return el;
 }
 
-// Mount как то должен связать vdom и реальный
 export function mount(target, vDom) {
   const dom = render(vDom);
   target.replaceWith(dom);
@@ -95,22 +105,13 @@ export function withState(initialState) {
   let self;
   console.log('withState');
   currentHook = self = [
-    () => {
-      console.log('state', self[5]);
-      // const vDom = self[2];
-      // restore state after remounting
-      // if (vDom && vDom.prevState !== undefined) {
-      //   state = vDom.prevState;
-      // }
-      return state;
-    },
+    () => state,
     (newState) => {
       state = newState;
       const target = self[3];
       const vDom = self[2];
       vDom.prevState = newState;
       console.log('Prev state: ', vDom.prevState);
-
       mount(target, vDom);
     }];
   return self;
