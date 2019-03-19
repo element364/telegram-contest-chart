@@ -2,7 +2,12 @@
 
 export function h(tag, props = {}, children = []) {
   const isSvgTag =
-    tag === "svg" || tag === "g" || tag === "circle" || tag === "path" || tag === "rect";
+    tag === "svg" ||
+    tag === "g" ||
+    tag === "circle" ||
+    tag === "path" ||
+    tag === "line" ||
+    tag === "rect";
 
   const el = isSvgTag
     ? document.createElementNS("http://www.w3.org/2000/svg", tag)
@@ -37,8 +42,8 @@ export function createElement(tagName, props = {}, children = []) {
       tagName,
       props,
       children
-    }
-  }
+    };
+  };
 }
 
 export function createComponent(fn, props = {}, children = []) {
@@ -56,15 +61,15 @@ let currentHook = [
 export function render(lazyVDom) {
   currentHook = [];
   prevState = lazyVDom.prevState;
-  let vdom = typeof lazyVDom === 'function' ? lazyVDom() : lazyVDom;
+  let vdom = typeof lazyVDom === "function" ? lazyVDom() : lazyVDom;
   // Component
-  if (typeof vdom === 'function') {
+  if (typeof vdom === "function") {
     currentHook[2] = lazyVDom;
     vdom = vdom();
   }
 
   let el;
-  if (typeof vdom === 'string') {
+  if (typeof vdom === "string") {
     el = document.createTextNode(vdom);
     currentHook[3] = el;
     return el;
@@ -80,7 +85,7 @@ export function render(lazyVDom) {
 
   currentHook[3] = el;
   for (let [attr, value] of Object.entries(vdom.props)) {
-    if (attr.indexOf('on') === 0) {
+    if (attr.indexOf("on") === 0) {
       el.addEventListener(attr.substring(2).toLowerCase(), value);
     } else {
       el.setAttribute(attr, value);
@@ -103,16 +108,17 @@ export function withState(initialState) {
     state = prevState;
   }
   let self;
-  console.log('withState');
+  console.log("withState");
   currentHook = self = [
     () => state,
-    (newState) => {
+    newState => {
       state = newState;
       const target = self[3];
       const vDom = self[2];
       vDom.prevState = newState;
-      console.log('Prev state: ', vDom.prevState);
+      console.log("Prev state: ", vDom.prevState);
       mount(target, vDom);
-    }];
+    }
+  ];
   return self;
 }

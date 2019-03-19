@@ -10,9 +10,6 @@ import data from "../docs/chart_data.json";
 for (let idx = 0; idx < data.length; idx++) {
   const dataSet = data[idx];
 
-  console.log("=====");
-  console.log(dataSet);
-
   let xType;
 
   for (const type of Object.keys(dataSet.types)) {
@@ -58,11 +55,7 @@ for (let idx = 0; idx < data.length; idx++) {
     h("hr")
   ]);
 
-  document
-    .getElementById("app")
-    .appendChild(
-      vApp
-    );
+  document.getElementById("app").appendChild(vApp);
 
   // Plotly.newPlot(id1, chartData, {
   //   xaxis: {
@@ -73,8 +66,7 @@ for (let idx = 0; idx < data.length; idx++) {
   renderChart(id2, chartData);
 }
 
-
-// Example 
+// Example
 // export function MyComponent(props) {
 //   const { title = 'empty title', last = false } = props;
 //   const [getState, setState] = withState(0);
@@ -93,12 +85,11 @@ for (let idx = 0; idx < data.length; idx++) {
 //           setState(count + 1);
 //         }
 //       }, ['Click me']),
-//       last ? createElement('div', {}, ['last']) 
+//       last ? createElement('div', {}, ['last'])
 //            : createComponent(MyComponent, {last: true})
 //     ]
 //   )
 // }
-
 
 // mount(document.getElementById('app'),
 //   createElement('div',
@@ -110,5 +101,5 @@ for (let idx = 0; idx < data.length; idx++) {
 //         }),
 //       createComponent(MyComponent, {title: 'Hello, world'})
 //     ])
-  
+
 // );

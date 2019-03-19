@@ -3,18 +3,12 @@ import { line } from "d3-shape";
 
 import { render, createComponent, createElement, mount, withState } from "./vdom";
 
-
 export function renderChart(id, data, { width = 960, height = 225 } = {}) {
   const previewHeight = 40;
   const chartHeight = height - previewHeight;
 
   console.log(`[+] Rendering to ${id}`, data);
-
   console.log({ chartHeight });
-
-  let moving = false;
-  let coords = {};
-  let x = 100;
 
   const lines = {};
 
@@ -22,7 +16,7 @@ export function renderChart(id, data, { width = 960, height = 225 } = {}) {
     lines[dataSet.name] = true;
   }
 
-  function LineChart({ width, height, data, xs = 0, xf = 1 }, children) {
+  function LineChart({ width, height, data, lX, rX }, children) {
     let minX = Number.MAX_VALUE;
     let maxX = Number.MIN_VALUE;
 
@@ -37,8 +31,12 @@ export function renderChart(id, data, { width = 960, height = 225 } = {}) {
       maxY = Math.max(maxY, ...dataSet.y);
     }
 
+    const preScale = scaleLinear()
+      .domain([0, width])
+      .range([minX, maxX]);
+
     const xScale = scaleLinear()
-      .domain([minX, maxX])
+      .domain([preScale(lX), preScale(rX)])
       .range([0, width]);
     const yScale = scaleLinear()
       .domain([minY, maxY])
@@ -49,7 +47,7 @@ export function renderChart(id, data, { width = 960, height = 225 } = {}) {
       {
         width,
         height,
-        viewBox: `${xs * width} 0 ${xf * width} ${height}`
+        viewBox: `0 0 ${width} ${height}`
       },
       [
         ...data.map(dataSet => {
@@ -78,106 +76,176 @@ export function renderChart(id, data, { width = 960, height = 225 } = {}) {
     );
   }
 
-  function Chart() {
-    const [getState, setState] = withState({ coords: null, moving: false, x: 100});
+  function Chart({ lines }) {
+    const [getState, setState] = withState({
+      lines,
+      coords: null,
+      startX: 0,
+      moving: false,
+      x: 100,
+      lStartX: 0,
+      lX: 100,
+      lMoving: false,
+      rStartX: 0,
+      rX: 200,
+      rMoving: false
+    });
     const state = getState();
-    let x = state.x;
-    console.log('state: ', state);
-    let coords = state.coords;
-    let moving = state.moving;
+    console.log("[*] state: ", state);
 
-    return createElement("div", {}, [
-      createComponent(LineChart, {
-        width,
-        height: chartHeight,
-        data: data.filter(dataSet => lines[dataSet.name]),
-        xs: state.x / width,
-        xf: (state.x + 100) / width
-      }),
-      createComponent(LineChart, {
-        width,
-        height: previewHeight,
-        data
-      },
-        [createElement("rect",
-          {
-            x,
-            y: 0,
-            width: 100,
-            height: height,
-            fill: "hsla(200, 100%, 50%, .5)",
-            onMouseDown(e) {
-              console.log("onMouseDown", e);
-              // coords = {
-              //   x: e.pageX
-              // };
-              // moving = true;
+    return createElement(
+      "div",
+      {
+        onMouseMove(e) {
+          if (state.moving) {
+            const xDiff = state.startX - e.pageX;
+
+            const lX = state.lX - xDiff;
+            const rX = state.rX - xDiff;
+
+            if (lX >= 0 && lX < rX && rX <= width) {
               setState({
                 ...state,
-                coords: {
-                  x: e.pageX
-                },
-                moving: true
-              });
-            },
-            onMouseMove(e) {
-              if (state.moving) {
-                console.log("onMouseMove", e.pageX, e.pageY);
-
-                const xDiff = coords.x - e.pageX;
-
-                coords.x = e.pageX;
-
-                x -= xDiff;
-
-                if (x < 0) {
-                  x = 0;
-                }
-
-                if (x + 100 > width) {
-                  x = width - 100;
-                }
-                setState({
-                  coords: {
-                    x: e.pageX
-                  },
-                  moving: true,
-                  x
-                });
-              }
-            },
-            onMouseUp(e) {
-              console.log("onMouseUp", e);
-              setState({
-                ...state,
-                moving: false,
-                coords: {},
+                startX: e.pageX,
+                lX,
+                rX
               });
             }
-          })
-        ]),
-      createElement(
-        "div",
-        {},
-        data.map(dataSet =>
-          createElement(
-            "span",
-            {
-              style: `margin: 0 5px; padding: 10px; border: 1px solid gray; border-radius: 15px; background-color: ${
-                lines[dataSet.name] ? "green" : "red"
-                };`,
-              onClick() {
-                lines[dataSet.name] = !lines[dataSet.name];
-                console.log(lines);
+          } else if (state.lMoving) {
+            const lX = state.lX - state.lStartX + e.pageX;
+
+            if (lX >= 0 && lX < state.rX) {
+              setState({
+                ...state,
+                lStartX: e.pageX,
+                lX
+              });
+            }
+          } else if (state.rMoving) {
+            const rX = state.rX - state.rStartX + e.pageX;
+
+            if (rX <= width && rX > state.lX) {
+              setState({
+                ...state,
+                rStartX: e.pageX,
+                rX
+              });
+            }
+          }
+        }
+      },
+      [
+        createComponent(LineChart, {
+          width,
+          height: chartHeight,
+          data: data.filter(dataSet => lines[dataSet.name]),
+          lX: state.lX,
+          rX: state.rX
+        }),
+        createComponent(
+          LineChart,
+          {
+            width,
+            height: previewHeight,
+            data,
+            lX: 0,
+            rX: width
+          },
+          [
+            createElement("rect", {
+              x: state.lX,
+              y: 0,
+              width: state.rX - state.lX,
+              height: height,
+              fill: "hsla(200, 100%, 50%, .5)",
+              class: "hover-cursor",
+              onMouseDown(e) {
+                setState({
+                  ...state,
+                  startX: e.pageX,
+                  moving: true
+                });
+              },
+              onMouseUp(e) {
+                setState({
+                  ...state,
+                  moving: false
+                });
               }
-            },
-            dataSet.name
+            }),
+            createElement("rect", {
+              x: state.lX,
+              y: 0,
+              width: 2,
+              height: height,
+              fill: "red",
+              class: "resize-cursor",
+              onMouseDown(e) {
+                setState({
+                  ...state,
+                  lStartX: e.pageX,
+                  lMoving: true
+                });
+              },
+              onMouseUp() {
+                setState({
+                  ...state,
+                  lMoving: false
+                });
+              }
+            }),
+            createElement("rect", {
+              x: state.rX,
+              y: 0,
+              width: 2,
+              height: height,
+              fill: "red",
+              class: "resize-cursor",
+              onMouseDown(e) {
+                setState({
+                  ...state,
+                  rStartX: e.pageX,
+                  rMoving: true
+                });
+              },
+              onMouseUp() {
+                setState({
+                  ...state,
+                  rMoving: false
+                });
+              }
+            })
+          ]
+        ),
+        createElement(
+          "div",
+          {},
+          data.map(dataSet =>
+            createElement(
+              "span",
+              {
+                style: `margin: 0 5px; padding: 10px; border: 1px solid gray; border-radius: 15px; background-color: ${
+                  lines[dataSet.name] ? "green" : "red"
+                };`,
+                onClick() {
+                  lines[dataSet.name] = !lines[dataSet.name];
+                  setState({
+                    ...state,
+                    lines: {
+                      ...lines,
+                      [dataSet.name]: !lines[dataSet.name]
+                    }
+                  });
+                }
+              },
+              dataSet.name
+            )
           )
         )
-      )
-    ]);
+      ]
+    );
   }
 
   const root = document.getElementById(id);
-  mount(root, createComponent(Chart));
+  mount(root, createComponent(Chart, { lines }));
 }
