@@ -1,11 +1,9 @@
 import Plotly from "plotly.js-dist";
 
 import { renderChart } from "./chart";
-import { h, render, createElement, createComponent, mount, withState } from "./vdom";
+import { h } from "./vdom";
 
 import data from "../docs/chart_data.json";
-
-// console.log(data);
 
 for (let idx = 0; idx < data.length; idx++) {
   const dataSet = data[idx];
@@ -57,11 +55,11 @@ for (let idx = 0; idx < data.length; idx++) {
 
   document.getElementById("app").appendChild(vApp);
 
-  // Plotly.newPlot(id1, chartData, {
-  //   xaxis: {
-  //     rangeslider: {}
-  //   }
-  // });
+  Plotly.newPlot(id1, chartData, {
+    xaxis: {
+      rangeslider: {}
+    }
+  });
 
   renderChart(id2, chartData);
 }
