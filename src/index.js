@@ -1,9 +1,22 @@
-import Plotly from "plotly.js-dist";
+import React from "react";
+import { render } from "react-dom";
 
-import { renderChart } from "./chart";
-import { h } from "./vdom";
+// import Plotly from "plotly.js-dist";
+import Chart from "./components/Chart";
 
 import data from "../docs/chart_data.json";
+
+import lagRadar from "./utils/lag-radar";
+
+const destroyLagRadar = lagRadar({
+  frames: 50, // number of frames to draw, more = worse performance
+  speed: 0.0017, // how fast the sweep moves (rads per ms)
+  size: 300, // outer frame px
+  inset: 3, // circle inset px
+  parent: document.getElementById("lagRadar") // DOM node to attach to
+});
+
+const root = document.getElementById("app");
 
 for (let idx = 0; idx < data.length; idx++) {
   const dataSet = data[idx];
@@ -42,26 +55,23 @@ for (let idx = 0; idx < data.length; idx++) {
     });
   }
 
-  console.log("chartData", chartData);
-
   const id1 = `chart-o-${idx}`;
+  const el1 = document.createElement("div");
+  el1.setAttribute("id", id1);
+  root.appendChild(el1);
+
   const id2 = `chart-c-${idx}`;
+  const el2 = document.createElement("div");
+  el2.setAttribute("id", id2);
+  root.appendChild(el2);
 
-  const vApp = h("div", {}, [
-    h("div", { id: id1 }),
-    h("div", { id: id2, style: "text-align: center;" }),
-    h("hr")
-  ]);
+  // Plotly.newPlot(id1, chartData, {
+  //   xaxis: {
+  //     rangeslider: {}
+  //   }
+  // });
 
-  document.getElementById("app").appendChild(vApp);
-
-  Plotly.newPlot(id1, chartData, {
-    xaxis: {
-      rangeslider: {}
-    }
-  });
-
-  renderChart(id2, chartData);
+  render(<Chart data={chartData} />, document.getElementById(id2));
 }
 
 // Example
