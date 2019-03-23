@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import LinesChart from "./LinesChart";
-import ZoomControl from "./ZoomControl";
+import React, {useState} from 'react';
+import LinesChart from './LinesChart';
+import ZoomControl from './ZoomControl';
+import LegendButton from './LegendButton';
 
-export default function Chart({ data, width = 960, height = 225 }) {
+export default function Chart({data, width = 960, height = 225}) {
+  const [nightMode, setNightMode] = useState(false);
   const [prevData, setPrevData] = useState({});
   const [visibleLines, setVisibleLines] = useState({});
   const [zoom, setZoom] = useState([100, 220]);
@@ -19,54 +21,58 @@ export default function Chart({ data, width = 960, height = 225 }) {
   }
 
   return (
-    <div>
+    <div style={{backgroundColor: nightMode ? '#252f3f' : '#fff'}}>
       <div>
         <LinesChart
           data={data.filter(chart => visibleLines[chart.name])}
           width={width}
           height={height - 40}
           showAxis
-          margins={{ top: 50, right: 0, bottom: 50, left: 50 }}
+          margins={{top: 50, right: 0, bottom: 50, left: 50}}
           zoom={zoom}
+          nightMode={nightMode}
         />
         <LinesChart
           data={data}
           width={width}
           height={40}
-          margins={{ top: 0, right: 0, bottom: 0, left: 50 }}
+          margins={{top: 0, right: 0, bottom: 0, left: 50}}
           zoom={[50, 960]}
-        >
+          nightMode={nightMode}>
           <ZoomControl
             width={width}
             height={height}
-            margins={{ top: 0, right: 0, bottom: 0, left: 50 }}
+            margins={{top: 0, right: 0, bottom: 0, left: 50}}
+            nightMode={nightMode}
             value={zoom}
             onChange={setZoom}
           />
         </LinesChart>
       </div>
 
-      <div style={{ display: "flex" }}>
+      <div className="legend">
         {Object.keys(visibleLines).map(line => (
-          <span
+          <LegendButton
             key={line}
-            style={{
-              margin: "0 5px",
-              padding: 10,
-              border: "1px solid gray",
-              borderRadius: 15,
-              backgroundColor: visibleLines[line] ? "green" : "red"
-            }}
+            toggled={visibleLines[line]}
+            nightMode={nightMode}
             onClick={() => {
               setVisibleLines({
                 ...visibleLines,
-                [line]: !visibleLines[line]
+                [line]: !visibleLines[line],
               });
-            }}
-          >
+            }}>
             {line}
-          </span>
+          </LegendButton>
         ))}
+      </div>
+
+      <div className="hover-cursor" style={{textAlign: 'center'}}>
+        <span
+          onClick={() => setNightMode(!nightMode)}
+          style={{color: nightMode ? '#3f9dea' : '#2d8cea'}}>
+          {nightMode ? 'Switch to Day Mode' : 'Switch to Night Mode'}
+        </span>
       </div>
     </div>
   );

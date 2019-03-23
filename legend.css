@@ -7,7 +7,7 @@ body {
 .legend {
   padding: 20px;
   font-size: 21px;
-  font-family: "Times";
+  font-family: 'Times';
   display: flex;
 }
 
@@ -21,6 +21,7 @@ body {
   padding-right: 18px;
   border: 1px solid #e6ecf0;
   color: #43484b;
+  cursor: pointer;
 }
 
 .legend-icon-container {
@@ -31,7 +32,6 @@ body {
   margin-top: -1px;
   margin-right: 16px;
   margin-left: 1px;
-  cursor: pointer;
 }
 
 .legend-icon-circle {

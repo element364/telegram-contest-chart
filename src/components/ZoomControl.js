@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, {useState, useEffect, useCallback} from 'react';
 
 export default class ZoomControl extends React.Component {
   constructor(props) {
@@ -8,7 +8,7 @@ export default class ZoomControl extends React.Component {
       moving: false,
       lMoving: false,
       rMoving: false,
-      startX: 0
+      startX: 0,
     };
 
     this.mouseMoveHandler = this.mouseMoveHandler.bind(this);
@@ -16,8 +16,8 @@ export default class ZoomControl extends React.Component {
   }
 
   mouseMoveHandler(e) {
-    const { value, onChange, width, margins } = this.props;
-    const { moving, lMoving, rMoving, startX } = this.state;
+    const {value, onChange, width, margins} = this.props;
+    const {moving, lMoving, rMoving, startX} = this.state;
 
     if (moving) {
       const dx = startX - e.pageX;
@@ -25,20 +25,24 @@ export default class ZoomControl extends React.Component {
       const lXNew = value[0] - dx;
       const rXNew = value[1] - dx;
 
-      if (lXNew >= margins.left && lXNew < rXNew && rXNew <= width - margins.right) {
-        this.setState({ startX: e.pageX }, () => onChange([lXNew, rXNew]));
+      if (
+        lXNew >= margins.left &&
+        lXNew < rXNew &&
+        rXNew <= width - margins.right
+      ) {
+        this.setState({startX: e.pageX}, () => onChange([lXNew, rXNew]));
       }
     } else if (lMoving) {
       const x = value[0] - startX + e.pageX;
 
       if (x >= margins.left && x < value[1]) {
-        this.setState({ startX: e.pageX }, () => onChange([x, value[1]]));
+        this.setState({startX: e.pageX}, () => onChange([x, value[1]]));
       }
     } else if (rMoving) {
       const x = value[1] - startX + e.pageX;
 
       if (x > value[0] && x <= width - margins.right) {
-        this.setState({ startX: e.pageX }, () => onChange([value[0], x]));
+        this.setState({startX: e.pageX}, () => onChange([value[0], x]));
       }
     }
   }
@@ -47,22 +51,22 @@ export default class ZoomControl extends React.Component {
     this.setState({
       moving: false,
       lMoving: false,
-      rMoving: false
+      rMoving: false,
     });
   }
 
   componentDidMount() {
-    document.addEventListener("mousemove", this.mouseMoveHandler);
-    document.addEventListener("mouseup", this.mouseUpHandler);
+    document.addEventListener('mousemove', this.mouseMoveHandler);
+    document.addEventListener('mouseup', this.mouseUpHandler);
   }
 
   componentWillUnmount() {
-    document.removeEventListener("mouseup", this.mouseUpHandler);
-    document.removeEventListener("mousemove", this.mouseMoveHandler);
+    document.removeEventListener('mouseup', this.mouseUpHandler);
+    document.removeEventListener('mousemove', this.mouseMoveHandler);
   }
 
   render() {
-    const { value, height } = this.props;
+    const {value, height, nightMode} = this.props;
 
     return (
       <g>
@@ -76,35 +80,35 @@ export default class ZoomControl extends React.Component {
           onMouseDown={e =>
             this.setState({
               startX: e.pageX,
-              moving: true
+              moving: true,
             })
           }
         />
         <rect
           x={value[0]}
           y={0}
-          width={2}
+          width={3}
           height={height}
-          fill="red"
+          fill={nightMode ? '#41556d' : '#deeaf4'}
           className="resize-cursor"
           onMouseDown={e =>
             this.setState({
               startX: e.pageX,
-              lMoving: true
+              lMoving: true,
             })
           }
         />
         <rect
           x={value[1]}
           y={0}
-          width={2}
+          width={3}
           height={height}
-          fill="red"
+          fill={nightMode ? '#41556d' : '#deeaf4'}
           className="resize-cursor"
           onMouseDown={e =>
             this.setState({
               startX: e.pageX,
-              rMoving: true
+              rMoving: true,
             })
           }
         />
