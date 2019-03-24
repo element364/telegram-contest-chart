@@ -1,19 +1,19 @@
-import React from 'react';
+import {h} from '../utils/vdom';
 
-export default function LegendButton({toggled, nightMode, children, onClick}) {
+export default function LegendButton({toggled, nightMode, onclick}, children) {
   return (
     <div
       className={`legend-item ${
         toggled ? 'legend-item__on' : 'legend-item__off'
       } animated`}
       style={{borderColor: nightMode ? '#354559' : '#e6ecf0'}}
-      onClick={onClick}>
+      onclick={onclick}>
       <i className="legend-icon-container">
         <i
           className="legend-icon-circle"
           style={{backgroundColor: toggled ? '#3cc23f' : '#f34c44'}}>
           <svg
-            className="legend-icon-circle__img"
+            class="legend-icon-circle__img"
             width="32"
             height="32"
             viewBox="0 0 32 32">

@@ -1,22 +1,24 @@
-import React, {useState} from 'react';
+import {h} from '../utils/vdom';
 
 import {scaleLinear, line} from '../utils/chart';
 
 import Axis from './Axis';
 import Popup from './Popup';
 
-export default function LineChart({
-  data,
-  margins,
-  zoom,
-  nightMode,
-  showAxis = false,
-  width,
-  height,
+export default function LinesChart(
+  {
+    data,
+    popupIdx,
+    margins,
+    zoom,
+    nightMode,
+    showAxis = false,
+    width,
+    height,
+    onSetPopupIdx = () => {},
+  },
   children,
-}) {
-  const [popupIdx, setPopupIdx] = useState(-1);
-
+) {
   let minX = Number.MAX_VALUE;
   let maxX = Number.MIN_VALUE;
 
@@ -54,7 +56,7 @@ export default function LineChart({
     <svg
       width={width}
       height={height}
-      onMouseMove={e => {
+      onmousemove={e => {
         const revX = reverseXScale(e.pageX);
 
         let minD = Math.abs(data[0].x[0] - revX);
@@ -69,8 +71,9 @@ export default function LineChart({
           }
         }
 
-        setPopupIdx(minIdx);
-      }}>
+        onSetPopupIdx(minIdx);
+      }}
+      onmouseleave={() => onSetPopupIdx(-1)}>
       {showAxis && (
         <Axis
           orient="Bottom"

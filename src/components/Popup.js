@@ -1,4 +1,4 @@
-import React from 'react';
+import {h} from '../utils/vdom';
 
 export default function Popup({
   x,

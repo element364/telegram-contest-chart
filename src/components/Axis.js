@@ -1,4 +1,4 @@
-import React from 'react';
+import {h} from '../utils/vdom';
 
 const tickFontSize = 10;
 const tickFont = 'sans-serif';
@@ -19,78 +19,76 @@ function translateY(scale0, scale1, d) {
   return `translate(0,${isFinite(y) ? y : scale1(d)})`;
 }
 
-export default class Axis extends React.Component {
-  render() {
-    const {
-      orient,
-      scale,
-      tickCount = 5,
-      translate,
-      format = v => v,
-      nightMode,
-    } = this.props;
+export default function Axis({
+  orient,
+  scale,
+  tickCount = 5,
+  translate,
+  format = v => v,
+  nightMode,
+}) {
+  const range = scale.range();
+  const values = scale.ticks(tickCount);
 
-    const range = scale.range();
-    const values = scale.ticks(tickCount);
+  const transform = orient === 'Bottom' ? translateX : translateY;
+  const tickTransformer = d => transform(scale, scale, d);
 
-    const transform = orient === 'Bottom' ? translateX : translateY;
-    const tickTransformer = d => transform(scale, scale, d);
+  const k = orient === 'Left' ? -1 : 1;
 
-    const k = orient === 'Left' ? -1 : 1;
+  const isHorizontal = orient === 'Left';
 
-    const isHorizontal = orient === 'Left';
+  const x = isHorizontal ? 'x' : 'y';
+  const y = isHorizontal ? 'y' : 'x';
 
-    const x = isHorizontal ? 'x' : 'y';
-    const y = isHorizontal ? 'y' : 'x';
+  const halfWidth = strokeWidth / 2;
 
-    const halfWidth = strokeWidth / 2;
+  const range0 = range[0] + halfWidth;
+  const range1 = range[range.length - 1] + halfWidth;
 
-    const range0 = range[0] + halfWidth;
-    const range1 = range[range.length - 1] + halfWidth;
+  const spacing = Math.max(tickSizeInner, 0) + tickPadding;
 
-    const spacing = Math.max(tickSizeInner, 0) + tickPadding;
+  const props = {};
 
-    return (
-      <g
-        fill="none"
-        fontSize={tickFontSize}
-        fontFamily={tickFont}
-        textAnchor={orient === 'Left' ? 'end' : 'middle'}
-        strokeWidth={strokeWidth}
-        transform={translate}>
-        <path
-          stroke={nightMode ? '#323d4e' : '#ecf0f3'}
-          d={
-            isHorizontal
-              ? `M${k * tickSizeOuter},${range0}H${halfWidth}V${range1}H${k *
-                  tickSizeOuter}`
-              : `M${range0},${k * tickSizeOuter}V${halfWidth}H${range1}V${k *
-                  tickSizeOuter}`
-          }
-        />
-        {values.map((value, idx) => {
-          const lineProps = {
-            stroke: nightMode ? '#323d4e' : '#ecf0f3',
-            [`${x}2`]: k * tickSizeInner,
-            [`${y}1`]: halfWidth,
-            [`${y}2`]: halfWidth,
-          };
+  return (
+    <g
+      fill="none"
+      font-size={tickFontSize}
+      font-family={tickFont}
+      text-anchor={orient === 'Left' ? 'end' : 'middle'}
+      stroke-width={strokeWidth}
+      transform={translate}>
+      <path
+        stroke={nightMode ? '#323d4e' : '#ecf0f3'}
+        d={
+          isHorizontal
+            ? `M${k * tickSizeOuter},${range0}H${halfWidth}V${range1}H${k *
+                tickSizeOuter}`
+            : `M${range0},${k * tickSizeOuter}V${halfWidth}H${range1}V${k *
+                tickSizeOuter}`
+        }
+      />
+      {values.map((value, idx) => {
+        const lineProps = {
+          stroke: nightMode ? '#323d4e' : '#ecf0f3',
+          [`${x}2`]: k * tickSizeInner,
+          [`${y}1`]: halfWidth,
+          [`${y}2`]: halfWidth,
+        };
 
-          const textProps = {
-            fill: nightMode ? '#556679' : '#96a2ab',
-            dy: orient === 'Bottom' ? '0.7em' : '0.3em',
-            [x]: k * spacing,
-            [y]: halfWidth,
-          };
+        const textProps = {
+          fill: nightMode ? '#556679' : '#96a2ab',
+          dy: orient === 'Bottom' ? '0.7em' : '0.3em',
+          [x]: k * spacing,
+          [y]: halfWidth,
+        };
 
-          return (
-            <g key={`t-${idx}`} opacity={1} transform={tickTransformer(value)}>
-              <line {...lineProps} />
-              <text {...textProps}>{format(value)}</text>
-            </g>
-          );
-        })}
-      </g>
-    );
-  }
+        return (
+          <g key={`t-${idx}`} opacity={1} transform={tickTransformer(value)}>
+            <line {...lineProps} />
+            <text {...textProps}>{format(value)}</text>
+          </g>
+        );
+      })}
+    </g>
+  );
 }
