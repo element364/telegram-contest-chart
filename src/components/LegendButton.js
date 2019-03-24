@@ -29,7 +29,7 @@ export default function LegendButton({toggled, nightMode, onclick}, children) {
         <i className="animation-circle" />
       </i>
       <span
-        className="legend-item-text"
+        className="legend-item-text no-user-select"
         style={{color: nightMode ? '#d8dde0' : '#525659'}}>
         {children}
       </span>

@@ -75,7 +75,7 @@ for (let idx = 0; idx < data.length; idx++) {
   const state = {
     nightMode: false,
     width: 960,
-    height: 225,
+    height: 320,
     zoomMargins: {top: 0, right: 0, bottom: 0, left: 50},
     data: chartData,
     zoom: [50, 150],
@@ -238,7 +238,8 @@ for (let idx = 0; idx < data.length; idx++) {
       <div className="hover-cursor" style={{textAlign: 'center'}}>
         <span
           onclick={actions.toggleNightMode}
-          style={{color: state.nightMode ? '#3f9dea' : '#2d8cea'}}>
+          style={{color: state.nightMode ? '#3f9dea' : '#2d8cea'}}
+          className="no-user-select">
           {state.nightMode ? 'Switch to Day Mode' : 'Switch to Night Mode'}
         </span>
       </div>

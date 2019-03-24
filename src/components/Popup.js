@@ -32,6 +32,16 @@ export default function Popup({
 
   return (
     <g>
+      {yLabels.map(label => (
+        <circle
+          key={`circle-${label.name}`}
+          cx={x}
+          cy={label.y}
+          r={3}
+          fill={nightMode ? '#252f3f' : '#fff'}
+          stroke={label.color}
+        />
+      ))}
       <line
         x1={x}
         y1={0}
@@ -54,22 +64,27 @@ export default function Popup({
         <text
           dx={margins.left}
           dy={margins.top + 10}
-          fill={nightMode ? '#fff' : '#222'}>
+          fill={nightMode ? '#fff' : '#222'}
+          class="no-user-select">
           {xLabel}
         </text>
       </g>
       {yLabels.map((label, idx) => (
-        <g key={label.name} transform={`translate(${x - legendWidth / 2}, 0)`}>
+        <g
+          key={`label-${label.name}`}
+          transform={`translate(${x - legendWidth / 2}, 0)`}>
           <text
             dx={margins.left + (maxLabel + between) * charWidth * idx}
             dy={margins.top + 30}
-            fill={label.color}>
+            fill={label.color}
+            class="no-user-select">
             {label.value}
           </text>
           <text
             dx={margins.left + (maxLabel + between) * charWidth * idx}
             dy={margins.top + 50}
-            fill={label.color}>
+            fill={label.color}
+            class="no-user-select">
             {label.name}
           </text>
         </g>

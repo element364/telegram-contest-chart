@@ -89,6 +89,7 @@ export default function LinesChart(
           orient="Bottom"
           translate={`translate(0, ${height - margins.bottom})`}
           scale={xScale}
+          l={-height + margins.top + margins.bottom}
           format={v => {
             const d = new Date(v);
             const month = d.getMonth() + 1;
@@ -105,6 +106,7 @@ export default function LinesChart(
           orient="Left"
           translate={`translate(${margins.left}, 0)`}
           scale={yScale}
+          l={width - margins.left - margins.right}
           nightMode={nightMode}
         />
       )}
@@ -127,9 +129,10 @@ export default function LinesChart(
       {popupIdx >= 0 && (
         <Popup
           x={xScale(data[0].x[popupIdx])}
-          height={height}
+          height={height - margins.bottom}
           xLabel={new Date(data[0].x[popupIdx]).toDateString()}
           yLabels={data.map(dataSet => ({
+            y: yScale(dataSet.y[popupIdx]),
             name: dataSet.name,
             color: dataSet.line.color,
             value: dataSet.y[popupIdx],

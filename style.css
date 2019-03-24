@@ -130,3 +130,7 @@ body {
 .resize-cursor:hover {
   cursor: ew-resize;
 }
+
+.no-user-select {
+  user-select: none;
+}

@@ -25,6 +25,7 @@ export default function Axis({
   tickCount = 5,
   translate,
   format = v => v,
+  l,
   nightMode,
 }) {
   const range = scale.range();
@@ -70,6 +71,7 @@ export default function Axis({
       {values.map((value, idx) => {
         const lineProps = {
           stroke: nightMode ? '#323d4e' : '#ecf0f3',
+          [`${x}1`]: l,
           [`${x}2`]: k * tickSizeInner,
           [`${y}1`]: halfWidth,
           [`${y}2`]: halfWidth,
@@ -80,6 +82,7 @@ export default function Axis({
           dy: orient === 'Bottom' ? '0.7em' : '0.3em',
           [x]: k * spacing,
           [y]: halfWidth,
+          class: 'no-user-select',
         };
 
         return (
