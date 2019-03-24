@@ -27,10 +27,10 @@ export default function Chart({data, width = 960, height = 225}) {
           data={data.filter(chart => visibleLines[chart.name])}
           width={width}
           height={height - 40}
-          showAxis
           margins={{top: 50, right: 0, bottom: 50, left: 50}}
           zoom={zoom}
           nightMode={nightMode}
+          showAxis
         />
         <LinesChart
           data={data}

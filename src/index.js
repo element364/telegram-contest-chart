@@ -1,22 +1,22 @@
-import React from "react";
-import { render } from "react-dom";
+import React from 'react';
+import {render} from 'react-dom';
 
-// import Plotly from "plotly.js-dist";
-import Chart from "./components/Chart";
+// import Plotly from 'plotly.js-dist';
+import Chart from './components/Chart';
 
-import data from "../docs/chart_data.json";
+import data from '../docs/chart_data.json';
 
-import lagRadar from "./utils/lag-radar";
+import lagRadar from './utils/lag-radar';
 
 const destroyLagRadar = lagRadar({
   frames: 50, // number of frames to draw, more = worse performance
   speed: 0.0017, // how fast the sweep moves (rads per ms)
   size: 300, // outer frame px
   inset: 3, // circle inset px
-  parent: document.getElementById("lagRadar") // DOM node to attach to
+  parent: document.getElementById('lagRadar'), // DOM node to attach to
 });
 
-const root = document.getElementById("app");
+const root = document.getElementById('app');
 
 for (let idx = 0; idx < data.length; idx++) {
   const dataSet = data[idx];
@@ -24,13 +24,13 @@ for (let idx = 0; idx < data.length; idx++) {
   let xType;
 
   for (const type of Object.keys(dataSet.types)) {
-    if (dataSet.types[type] === "x") {
+    if (dataSet.types[type] === 'x') {
       xType = type;
     }
   }
 
-  if (typeof xType === "undefined") {
-    throw new Error("Missing x type");
+  if (typeof xType === 'undefined') {
+    throw new Error('Missing x type');
   }
 
   const columnsByName = {};
@@ -39,7 +39,7 @@ for (let idx = 0; idx < data.length; idx++) {
     columnsByName[dataSet.columns[i][0]] = dataSet.columns[i].slice(1);
   }
 
-  columnsByName[xType] = columnsByName[xType].map(unixTimestamp => new Date(unixTimestamp));
+  // columnsByName[xType] = columnsByName[xType].map(unixTimestamp => new Date(unixTimestamp));
 
   const chartData = [];
 
@@ -47,28 +47,28 @@ for (let idx = 0; idx < data.length; idx++) {
     chartData.push({
       x: columnsByName.x,
       y: columnsByName[color],
-      mode: "lines",
+      mode: 'lines',
       name: dataSet.names[color],
       line: {
-        color: dataSet.colors[color]
-      }
+        color: dataSet.colors[color],
+      },
     });
   }
 
   const id1 = `chart-o-${idx}`;
-  const el1 = document.createElement("div");
-  el1.setAttribute("id", id1);
+  const el1 = document.createElement('div');
+  el1.setAttribute('id', id1);
   root.appendChild(el1);
 
   const id2 = `chart-c-${idx}`;
-  const el2 = document.createElement("div");
-  el2.setAttribute("id", id2);
+  const el2 = document.createElement('div');
+  el2.setAttribute('id', id2);
   root.appendChild(el2);
 
   // Plotly.newPlot(id1, chartData, {
   //   xaxis: {
-  //     rangeslider: {}
-  //   }
+  //     rangeslider: {},
+  //   },
   // });
 
   render(<Chart data={chartData} />, document.getElementById(id2));
