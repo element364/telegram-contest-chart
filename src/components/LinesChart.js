@@ -22,14 +22,9 @@ export default function LinesChart(
   let minX = Number.MAX_VALUE;
   let maxX = Number.MIN_VALUE;
 
-  let minY = Number.MAX_VALUE;
-  let maxY = Number.MIN_VALUE;
-
   for (const dataSet of data) {
     minX = Math.min(minX, ...dataSet.x);
     maxX = Math.max(maxX, ...dataSet.x);
-    minY = Math.min(minY, ...dataSet.y);
-    maxY = Math.max(maxY, ...dataSet.y);
   }
 
   const preScale = scaleLinear({
@@ -37,14 +32,29 @@ export default function LinesChart(
     range: [minX, maxX],
   });
 
+  const startX = preScale(zoom[0]);
+  const endX = preScale(zoom[1]);
+
+  let minY = Number.MAX_VALUE;
+  let maxY = Number.MIN_VALUE;
+
+  for (const dataSet of data) {
+    for (let i = 0; i < dataSet.x.length; i++) {
+      if (startX <= dataSet.x[i] && dataSet.x[i] <= endX) {
+        minY = Math.min(minY, dataSet.y[i]);
+        maxY = Math.max(maxY, dataSet.y[i]);
+      }
+    }
+  }
+
   const xScale = scaleLinear({
-    domain: [preScale(zoom[0]), preScale(zoom[1])],
+    domain: [startX, endX],
     range: [margins.left, width - margins.right],
   });
 
   const reverseXScale = scaleLinear({
     domain: [margins.left, width - margins.right],
-    range: [preScale(zoom[0]), preScale(zoom[1])],
+    range: [startX, endX],
   });
 
   const yScale = scaleLinear({
