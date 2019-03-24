@@ -1,11 +1,10 @@
-import {h, app} from './utils/vdom';
+import {h, mount} from './utils/vdom';
 
 import LinesChart from './components/LinesChart';
 import LegendButton from './components/LegendButton';
 import ZoomControl from './components/ZoomControl';
 
 import data from '../docs/chart_data.json';
-import '../style.css';
 
 /*
 import lagRadar from './utils/lag-radar';
@@ -74,7 +73,7 @@ for (let idx = 0; idx < data.length; idx++) {
 
   const state = {
     nightMode: false,
-    width: 960,
+    width: 640,
     height: 320,
     zoomMargins: {top: 0, right: 0, bottom: 0, left: 50},
     data: chartData,
@@ -198,6 +197,7 @@ for (let idx = 0; idx < data.length; idx++) {
           height={state.height - 40}
           margins={{top: 50, right: 0, bottom: 50, left: 50}}
           onSetPopupIdx={actions.setPopupIdx}
+          clipId="large-clip"
           showAxis
         />
         <LinesChart
@@ -206,7 +206,8 @@ for (let idx = 0; idx < data.length; idx++) {
           width={state.width}
           height={40}
           margins={state.zoomMargins}
-          zoom={[state.zoomMargins.left, state.width]}>
+          zoom={[state.zoomMargins.left, state.width]}
+          clipId="zoom-clip">
           <ZoomControl
             nightMode={state.nightMode}
             width={state.width}
@@ -246,5 +247,5 @@ for (let idx = 0; idx < data.length; idx++) {
     </div>
   );
 
-  app(state, actions, view, document.getElementById(id2));
+  mount(state, actions, view, document.getElementById(id2));
 }

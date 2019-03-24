@@ -15,6 +15,7 @@ export default function LinesChart(
     showAxis = false,
     width,
     height,
+    clipId,
     onSetPopupIdx = () => {},
   },
   children,
@@ -110,6 +111,14 @@ export default function LinesChart(
           nightMode={nightMode}
         />
       )}
+      <clipPath id={clipId}>
+        <rect
+          x={margins.left}
+          y={margins.top}
+          width={width - margins.left - margins.right}
+          height={height - margins.top - margins.bottom}
+        />
+      </clipPath>
       {data.map(dataSet => {
         const d = line({
           x: x => xScale(x),
@@ -122,6 +131,7 @@ export default function LinesChart(
             d={d}
             stroke={dataSet.line.color}
             fill="none"
+            clip-path={`url(#${clipId})`}
           />
         );
       })}

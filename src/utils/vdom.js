@@ -26,7 +26,7 @@ export function h(name, attributes) {
       };
 }
 
-export function app(state, actions, view, container) {
+export function mount(state, actions, view, container) {
   var map = [].map;
   var rootElement = (container && container.children[0]) || null;
   var oldNode = rootElement && recycleElement(rootElement);
