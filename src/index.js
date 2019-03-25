@@ -1,10 +1,10 @@
-import {h, mount} from './utils/vdom';
+import { h, mount } from "./utils/vdom";
 
-import LinesChart from './components/LinesChart';
-import LegendButton from './components/LegendButton';
-import ZoomControl from './components/ZoomControl';
+import LinesChart from "./components/LinesChart";
+import LegendButton from "./components/LegendButton";
+import ZoomControl from "./components/ZoomControl";
 
-import data from '../docs/chart_data.json';
+import data from "../docs/chart_data.json";
 
 /*
 import lagRadar from './utils/lag-radar';
@@ -18,7 +18,7 @@ const destroyLagRadar = lagRadar({
 });
 */
 
-const root = document.getElementById('app');
+const root = document.getElementById("app");
 
 for (let idx = 0; idx < data.length; idx++) {
   const dataSet = data[idx];
@@ -26,13 +26,13 @@ for (let idx = 0; idx < data.length; idx++) {
   let xType;
 
   for (const type of Object.keys(dataSet.types)) {
-    if (dataSet.types[type] === 'x') {
+    if (dataSet.types[type] === "x") {
       xType = type;
     }
   }
 
-  if (typeof xType === 'undefined') {
-    throw new Error('Missing x type');
+  if (typeof xType === "undefined") {
+    throw new Error("Missing x type");
   }
 
   const columnsByName = {};
@@ -47,22 +47,22 @@ for (let idx = 0; idx < data.length; idx++) {
     chartData.push({
       x: columnsByName.x,
       y: columnsByName[color],
-      mode: 'lines',
+      mode: "lines",
       name: dataSet.names[color],
       line: {
-        color: dataSet.colors[color],
-      },
+        color: dataSet.colors[color]
+      }
     });
   }
 
   const id1 = `chart-o-${idx}`;
-  const el1 = document.createElement('div');
-  el1.setAttribute('id', id1);
+  const el1 = document.createElement("div");
+  el1.setAttribute("id", id1);
   root.appendChild(el1);
 
   const id2 = `chart-c-${idx}`;
-  const el2 = document.createElement('div');
-  el2.setAttribute('id', id2);
+  const el2 = document.createElement("div");
+  el2.setAttribute("id", id2);
   root.appendChild(el2);
 
   const visibleLines = {};
@@ -75,7 +75,7 @@ for (let idx = 0; idx < data.length; idx++) {
     nightMode: false,
     width: 640,
     height: 320,
-    zoomMargins: {top: 0, right: 0, bottom: 0, left: 50},
+    zoomMargins: { top: 0, right: 0, bottom: 0, left: 50 },
     data: chartData,
     zoom: [50, 150],
     startX: 0,
@@ -83,53 +83,59 @@ for (let idx = 0; idx < data.length; idx++) {
     lMoving: false,
     rMoving: false,
     visibleLines,
-    popupIdx: -1,
+    popupIdx: -1
   };
 
   const actions = {
     toggleNightMode: () => state => ({
       ...state,
-      nightMode: !state.nightMode,
+      nightMode: !state.nightMode
     }),
     toggleLineVisibility: line => state => ({
       ...state,
       visibleLines: {
         ...state.visibleLines,
-        [line]: !state.visibleLines[line],
-      },
+        [line]: !state.visibleLines[line]
+      }
     }),
     setPopupIdx: idx => state => ({
       ...state,
-      popupIdx: idx,
+      popupIdx: idx
     }),
     startMoveLeft: e => (state, acts) => {
-      addEventListener('mousemove', acts.mouseMove);
-      addEventListener('mouseup', acts.mouseUp);
+      addEventListener("mousemove", acts.mouseMove);
+      addEventListener("touchmove", acts.mouseMove);
+      addEventListener("mouseup", acts.mouseUp);
+      addEventListener("touchend", acts.mouseUp);
 
       return {
         ...state,
         lMoving: true,
-        startX: e.pageX,
+        startX: e.pageX
       };
     },
     startMove: e => (state, acts) => {
-      addEventListener('mousemove', acts.mouseMove);
-      addEventListener('mouseup', acts.mouseUp);
+      addEventListener("mousemove", acts.mouseMove);
+      addEventListener("touchmove", acts.mouseMove);
+      addEventListener("mouseup", acts.mouseUp);
+      addEventListener("touchend", acts.mouseUp);
 
       return {
         ...state,
         moving: true,
-        startX: e.pageX,
+        startX: e.pageX
       };
     },
     startMoveRight: e => (state, acts) => {
-      addEventListener('mousemove', acts.mouseMove);
-      addEventListener('mouseup', acts.mouseUp);
+      addEventListener("mousemove", acts.mouseMove);
+      addEventListener("touchmove", acts.mouseMove);
+      addEventListener("mouseup", acts.mouseUp);
+      addEventListener("touchend", acts.mouseUp);
 
       return {
         ...state,
         rMoving: true,
-        startX: e.pageX,
+        startX: e.pageX
       };
     },
     mouseMove: e => state => {
@@ -147,7 +153,7 @@ for (let idx = 0; idx < data.length; idx++) {
           return {
             ...state,
             startX: e.pageX,
-            zoom: [lXNew, rXNew],
+            zoom: [lXNew, rXNew]
           };
         }
       } else if (state.lMoving) {
@@ -157,7 +163,7 @@ for (let idx = 0; idx < data.length; idx++) {
           return {
             ...state,
             startX: e.pageX,
-            zoom: [x, state.zoom[1]],
+            zoom: [x, state.zoom[1]]
           };
         }
       } else if (state.rMoving) {
@@ -167,26 +173,26 @@ for (let idx = 0; idx < data.length; idx++) {
           return {
             ...state,
             startX: e.pageX,
-            zoom: [state.zoom[0], x],
+            zoom: [state.zoom[0], x]
           };
         }
       }
     },
     mouseUp: () => (state, acts) => {
-      removeEventListener('mousemove', acts.mouseMove);
-      removeEventListener('mouseup', acts.mouseUp);
+      removeEventListener("mousemove", acts.mouseMove);
+      removeEventListener("mouseup", acts.mouseUp);
 
       return {
         ...state,
         lMoving: false,
         moving: false,
-        rMoving: false,
+        rMoving: false
       };
-    },
+    }
   };
 
   const view = (state, actions) => (
-    <div style={{backgroundColor: state.nightMode ? '#252f3f' : '#fff'}}>
+    <div style={{ backgroundColor: state.nightMode ? "#252f3f" : "#fff" }}>
       <div>
         <LinesChart
           nightMode={state.nightMode}
@@ -195,11 +201,13 @@ for (let idx = 0; idx < data.length; idx++) {
           popupIdx={state.popupIdx}
           width={state.width}
           height={state.height - 40}
-          margins={{top: 50, right: 0, bottom: 50, left: 50}}
+          margins={{ top: 50, right: 0, bottom: 50, left: 50 }}
           onSetPopupIdx={actions.setPopupIdx}
           clipId="large-clip"
           showAxis
         />
+      </div>
+      <div>
         <LinesChart
           nightMode={state.nightMode}
           data={state.data}
@@ -207,7 +215,8 @@ for (let idx = 0; idx < data.length; idx++) {
           height={40}
           margins={state.zoomMargins}
           zoom={[state.zoomMargins.left, state.width]}
-          clipId="zoom-clip">
+          clipId="zoom-clip"
+        >
           <ZoomControl
             nightMode={state.nightMode}
             width={state.width}
@@ -216,7 +225,7 @@ for (let idx = 0; idx < data.length; idx++) {
             value={state.zoom}
             onchange={(state, zoom) => ({
               ...state,
-              zoom,
+              zoom
             })}
             onMousedownLeft={actions.startMoveLeft}
             onMouseDown={actions.startMove}
@@ -230,18 +239,20 @@ for (let idx = 0; idx < data.length; idx++) {
           <LegendButton
             nightMode={state.nightMode}
             toggled={state.visibleLines[line]}
-            onclick={() => actions.toggleLineVisibility(line)}>
+            onclick={() => actions.toggleLineVisibility(line)}
+          >
             {line}
           </LegendButton>
         ))}
       </div>
 
-      <div className="hover-cursor" style={{textAlign: 'center'}}>
+      <div className="hover-cursor" style={{ textAlign: "center" }}>
         <span
           onclick={actions.toggleNightMode}
-          style={{color: state.nightMode ? '#3f9dea' : '#2d8cea'}}
-          className="no-user-select">
-          {state.nightMode ? 'Switch to Day Mode' : 'Switch to Night Mode'}
+          style={{ color: state.nightMode ? "#3f9dea" : "#2d8cea" }}
+          className="no-user-select"
+        >
+          {state.nightMode ? "Switch to Day Mode" : "Switch to Night Mode"}
         </span>
       </div>
     </div>
