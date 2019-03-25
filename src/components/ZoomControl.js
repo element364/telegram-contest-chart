@@ -22,9 +22,9 @@ export default function ZoomControl({
         ontouchstart={onMouseDown}
       />
       <rect
-        x={value[0]}
+        x={value[0] - 5}
         y={0}
-        width={3}
+        width={5}
         height={height}
         fill={nightMode ? "#41556d" : "#deeaf4"}
         class="resize-cursor"
@@ -34,7 +34,7 @@ export default function ZoomControl({
       <rect
         x={value[1]}
         y={0}
-        width={3}
+        width={5}
         height={height}
         fill={nightMode ? "#41556d" : "#deeaf4"}
         class="resize-cursor"

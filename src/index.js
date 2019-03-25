@@ -6,17 +6,15 @@ import ZoomControl from "./components/ZoomControl";
 
 import data from "../docs/chart_data.json";
 
-/*
-import lagRadar from './utils/lag-radar';
+// import lagRadar from "./utils/lag-radar";
 
-const destroyLagRadar = lagRadar({
-  frames: 50, // number of frames to draw, more = worse performance
-  speed: 0.0017, // how fast the sweep moves (rads per ms)
-  size: 300, // outer frame px
-  inset: 3, // circle inset px
-  parent: document.getElementById('lagRadar'), // DOM node to attach to
-});
-*/
+// const destroyLagRadar = lagRadar({
+//   frames: 50, // number of frames to draw, more = worse performance
+//   speed: 0.0017, // how fast the sweep moves (rads per ms)
+//   size: 300, // outer frame px
+//   inset: 3, // circle inset px
+//   parent: document.getElementById("lagRadar") // DOM node to attach to
+// });
 
 const root = document.getElementById("app");
 
@@ -68,7 +66,7 @@ for (let idx = 0; idx < data.length; idx++) {
 
   const state = {
     nightMode: false,
-    width: 640,
+    width: document.getElementById(id2).getBoundingClientRect().width - 50,
     height: 320,
     zoomMargins: { top: 0, right: 0, bottom: 0, left: 50 },
     data: chartData,
@@ -82,6 +80,10 @@ for (let idx = 0; idx < data.length; idx++) {
   };
 
   const actions = {
+    setWidth: width => state => ({
+      ...state,
+      width
+    }),
     toggleNightMode: () => state => ({
       ...state,
       nightMode: !state.nightMode
@@ -286,7 +288,11 @@ for (let idx = 0; idx < data.length; idx++) {
     </div>
   );
 
-  mount(state, actions, view, document.getElementById(id2));
+  const { setWidth } = mount(state, actions, view, document.getElementById(id2));
+
+  window.addEventListener("resize", () =>
+    setWidth(document.getElementById(id2).getBoundingClientRect().width - 50)
+  );
 }
 
 function echo(...args) {
