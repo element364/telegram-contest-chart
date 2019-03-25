@@ -55,11 +55,6 @@ for (let idx = 0; idx < data.length; idx++) {
     });
   }
 
-  const id1 = `chart-o-${idx}`;
-  const el1 = document.createElement("div");
-  el1.setAttribute("id", id1);
-  root.appendChild(el1);
-
   const id2 = `chart-c-${idx}`;
   const el2 = document.createElement("div");
   el2.setAttribute("id", id2);
@@ -110,7 +105,7 @@ for (let idx = 0; idx < data.length; idx++) {
       }
 
       addEventListener("mousemove", acts.mouseMove);
-      addEventListener("touchmove", acts.mouseMove);
+      addEventListener("touchmove", acts.mouseMove, { passive: false });
       addEventListener("mouseup", acts.mouseUp);
       addEventListener("touchend", acts.mouseUp);
 
@@ -128,7 +123,7 @@ for (let idx = 0; idx < data.length; idx++) {
       }
 
       addEventListener("mousemove", acts.mouseMove);
-      addEventListener("touchmove", acts.mouseMove);
+      addEventListener("touchmove", acts.mouseMove, { passive: false });
       addEventListener("mouseup", acts.mouseUp);
       addEventListener("touchend", acts.mouseUp);
 
@@ -146,7 +141,7 @@ for (let idx = 0; idx < data.length; idx++) {
       }
 
       addEventListener("mousemove", acts.mouseMove);
-      addEventListener("touchmove", acts.mouseMove);
+      addEventListener("touchmove", acts.mouseMove, { passive: false });
       addEventListener("mouseup", acts.mouseUp);
       addEventListener("touchend", acts.mouseUp);
 
@@ -157,6 +152,8 @@ for (let idx = 0; idx < data.length; idx++) {
       };
     },
     mouseMove: e => state => {
+      e.preventDefault();
+
       let pageX = e.pageX;
 
       if (e.touches) {
@@ -218,7 +215,12 @@ for (let idx = 0; idx < data.length; idx++) {
   };
 
   const view = (state, actions) => (
-    <div style={{ backgroundColor: state.nightMode ? "#252f3f" : "#fff" }}>
+    <div
+      style={{
+        backgroundColor: state.nightMode ? "#252f3f" : "#fff",
+        touchAction: state.lMoving || state.moving || state.rMoving ? "none" : "auto"
+      }}
+    >
       <div>
         <LinesChart
           nightMode={state.nightMode}
