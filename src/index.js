@@ -104,9 +104,7 @@ for (let idx = 0; idx < data.length; idx++) {
     }),
     startMoveLeft: e => (state, acts) => {
       addEventListener("mousemove", acts.mouseMove);
-      addEventListener("touchmove", acts.mouseMove);
       addEventListener("mouseup", acts.mouseUp);
-      addEventListener("touchend", acts.mouseUp);
 
       return {
         ...state,
@@ -116,9 +114,7 @@ for (let idx = 0; idx < data.length; idx++) {
     },
     startMove: e => (state, acts) => {
       addEventListener("mousemove", acts.mouseMove);
-      addEventListener("touchmove", acts.mouseMove);
       addEventListener("mouseup", acts.mouseUp);
-      addEventListener("touchend", acts.mouseUp);
 
       return {
         ...state,
@@ -128,9 +124,7 @@ for (let idx = 0; idx < data.length; idx++) {
     },
     startMoveRight: e => (state, acts) => {
       addEventListener("mousemove", acts.mouseMove);
-      addEventListener("touchmove", acts.mouseMove);
       addEventListener("mouseup", acts.mouseUp);
-      addEventListener("touchend", acts.mouseUp);
 
       return {
         ...state,

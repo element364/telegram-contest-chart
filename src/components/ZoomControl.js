@@ -19,7 +19,6 @@ export default function ZoomControl({
         fill="hsla(200, 100%, 50%, .5)"
         class="hover-cursor"
         onmousedown={onMouseDown}
-        ontouchstart={onMouseDown}
       />
       <rect
         x={value[0]}
@@ -29,7 +28,6 @@ export default function ZoomControl({
         fill={nightMode ? "#41556d" : "#deeaf4"}
         class="resize-cursor"
         onmousedown={onMousedownLeft}
-        ontouchstart={onMousedownLeft}
       />
       <rect
         x={value[1]}
@@ -39,7 +37,6 @@ export default function ZoomControl({
         fill={nightMode ? "#41556d" : "#deeaf4"}
         class="resize-cursor"
         onmousedown={onMouseDownRight}
-        ontouchstart={onMouseDownRight}
       />
     </g>
   );
