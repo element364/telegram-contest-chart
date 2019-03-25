@@ -103,8 +103,16 @@ for (let idx = 0; idx < data.length; idx++) {
       popupIdx: idx
     }),
     startMoveLeft: e => (state, acts) => {
+      let pageX = e.pageX;
+
+      if (e.touches) {
+        pageX = e.touches[0].pageX;
+      }
+
       addEventListener("mousemove", acts.mouseMove);
+      addEventListener("touchmove", acts.mouseMove);
       addEventListener("mouseup", acts.mouseUp);
+      addEventListener("touchend", acts.mouseUp);
 
       return {
         ...state,
@@ -113,28 +121,50 @@ for (let idx = 0; idx < data.length; idx++) {
       };
     },
     startMove: e => (state, acts) => {
+      let pageX = e.pageX;
+
+      if (e.touches) {
+        pageX = e.touches[0].pageX;
+      }
+
       addEventListener("mousemove", acts.mouseMove);
+      addEventListener("touchmove", acts.mouseMove);
       addEventListener("mouseup", acts.mouseUp);
+      addEventListener("touchend", acts.mouseUp);
 
       return {
         ...state,
         moving: true,
-        startX: e.pageX
+        startX: pageX
       };
     },
     startMoveRight: e => (state, acts) => {
+      let pageX = e.pageX;
+
+      if (e.touches) {
+        pageX = e.touches[0].pageX;
+      }
+
       addEventListener("mousemove", acts.mouseMove);
+      addEventListener("touchmove", acts.mouseMove);
       addEventListener("mouseup", acts.mouseUp);
+      addEventListener("touchend", acts.mouseUp);
 
       return {
         ...state,
         rMoving: true,
-        startX: e.pageX
+        startX: pageX
       };
     },
     mouseMove: e => state => {
+      let pageX = e.pageX;
+
+      if (e.touches) {
+        pageX = e.touches[0].pageX;
+      }
+
       if (state.moving) {
-        const dx = state.startX - e.pageX;
+        const dx = state.startX - pageX;
 
         const lXNew = state.zoom[0] - dx;
         const rXNew = state.zoom[1] - dx;
@@ -146,27 +176,27 @@ for (let idx = 0; idx < data.length; idx++) {
         ) {
           return {
             ...state,
-            startX: e.pageX,
+            startX: pageX,
             zoom: [lXNew, rXNew]
           };
         }
       } else if (state.lMoving) {
-        const x = state.zoom[0] - state.startX + e.pageX;
+        const x = state.zoom[0] - state.startX + pageX;
 
         if (x >= state.zoomMargins.left && x < state.zoom[1]) {
           return {
             ...state,
-            startX: e.pageX,
+            startX: pageX,
             zoom: [x, state.zoom[1]]
           };
         }
       } else if (state.rMoving) {
-        const x = state.zoom[1] - state.startX + e.pageX;
+        const x = state.zoom[1] - state.startX + pageX;
 
         if (x > state.zoom[0] && x <= state.width - state.zoomMargins.right) {
           return {
             ...state,
-            startX: e.pageX,
+            startX: pageX,
             zoom: [state.zoom[0], x]
           };
         }
@@ -174,7 +204,9 @@ for (let idx = 0; idx < data.length; idx++) {
     },
     mouseUp: () => (state, acts) => {
       removeEventListener("mousemove", acts.mouseMove);
+      removeEventListener("touchmove", acts.mouseMove);
       removeEventListener("mouseup", acts.mouseUp);
+      removeEventListener("touchend", acts.mouseUp);
 
       return {
         ...state,
@@ -254,3 +286,9 @@ for (let idx = 0; idx < data.length; idx++) {
 
   mount(state, actions, view, document.getElementById(id2));
 }
+
+function echo(...args) {
+  // console.log(args);
+}
+
+document.addEventListener("touchstart", echo);
